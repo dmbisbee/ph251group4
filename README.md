@@ -5,6 +5,7 @@ PH251 Group 4
 Scenario 1: Infectious Disease Outbreak in California
 
 **git repository link**
+https://github.com/dmbisbee/ph251group4
 
 **Roles and responsibilities:**
 _In a meeting, define these using the "prompts to help define roles and responsibilities within your team" below._
