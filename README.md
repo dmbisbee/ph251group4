@@ -1,10 +1,10 @@
 # ph251group4
 PH251 Group 4
 
-**Project option selection** 
+**Project Selection:** //
 Scenario 1: Infectious Disease Outbreak in California
 
-**git repository link**
+**git repository link** //
 https://github.com/dmbisbee/ph251group4
 
 **Roles and responsibilities:**
