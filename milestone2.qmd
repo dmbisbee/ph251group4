@@ -1,7 +1,13 @@
 
 ```{r}
 
+ca_cases <- readr::read_csv("sim_novelid_CA.csv")
 
-ca_pop <- readr::read_csv()
+ca_pop <- readr::read_csv("ca_pop_2023.csv")
+
+la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
+
+
+
 ```
 
