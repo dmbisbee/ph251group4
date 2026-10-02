@@ -1,0 +1,25 @@
+---
+title: "Milestone 2"
+format: html
+---
+
+# import statement for all datasets
+
+```{r}
+
+```
+
+scenario_1
+
+
+# Identify data types for 5+ data elements/columns/variables
+- identify 5+ data elements required for your specified scenario
+- determine the types of each data element (character, numeric, factor)
+- will any columns need to be converted? 
+
+# Basic Description of the 5+ data elements
+- Numeric: mean, median, range
+- Character: unique values/categories
+
+# Describe cleaning that each data source may need
+
