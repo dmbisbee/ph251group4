@@ -20,9 +20,9 @@ la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 ```{r}
 #Clean up column names (use snake case)
 
-#snake_case(ca_cases)
-#snake_case(ca_pop)
-#snake_case(la_cases)
+snake_case(ca_cases)
+snake_case(ca_pop)
+snake_case(la_cases)
 
 ```
 
