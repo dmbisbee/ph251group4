@@ -1,43 +1,30 @@
 
-Milestone #2 Objective
-Dataset imported into R; identify key data elements and their data type.
+Milestone #2 Objective: Dataset imported into R; identify key data elements and their data type.
 
 Description of dataset:
-
 What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
+The source of the data is a (simulated) infectious disease outbreak in California, including weekly case data for all counties except for LA, a similar data set for cases in Los Angeles county, and 2023 California population data. The population data will allow for stratification by demographic and geographic factors.
 
 How does the dataset relate to the group problem statement and question?
+The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prvention of the outbreak.
 
 ```{r}
 
 ca_cases <- readr::read_csv("sim_novelid_CA.csv")
-
 ca_pop <- readr::read_csv("ca_pop_2023.csv")
-
 la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 
-
 ```
-
-What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
-
-ANSWER: 
-
-How does the dataset relate to the group problem statement and question?
-
-ANSWER:
-
 
 
 ```{r}
 #Clean up column names (use snake case)
 
-
+#snake_case(ca_cases)
+#snake_case(ca_pop)
+#snake_case(la_cases)
 
 ```
-
-
-
 
 ```{r}
 #Identify data types for 5+ data elements/columns/variables
@@ -76,6 +63,7 @@ ANSWER:
 ```
 
 Describe cleaning that each data source may need:
+Column names should be standardized (using snake_case) to make future calculations easier, especially between the LA country data and the data for the rest of the state. 
 
 NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data! Please list out the anticipated data cleaning needed. 
 Examples:
