@@ -11,3 +11,8 @@ la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 
 ```
 
+```{r}
+
+
+```
+
