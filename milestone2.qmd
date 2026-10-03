@@ -1,4 +1,13 @@
 
+Milestone #2 Objective
+Dataset imported into R; identify key data elements and their data type.
+
+Description of dataset:
+
+What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
+
+How does the dataset relate to the group problem statement and question?
+
 ```{r}
 
 ca_cases <- readr::read_csv("sim_novelid_CA.csv")
