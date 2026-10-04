@@ -24,9 +24,25 @@ la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 ```{r}
 #Clean up column names (use snake case)
 
-snake_case(ca_cases)
-snake_case(ca_pop)
-snake_case(la_cases)
+#Danielle, these codes did not work for me. 
+
+#snake_case(ca_cases)
+#snake_case(ca_pop)
+#snake_case(la_cases)
+
+
+#I am using the "janitor::clean_names()" function.
+
+ca_cases <- janitor::clean_names(ca_cases)
+
+la_cases <- janitor::clean_names(la_cases)
+
+ca_pop <- janitor::clean_names(ca_pop)
+
+ca_cases
+la_cases
+ca_pop
+
 
 ```
 
