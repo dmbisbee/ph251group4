@@ -3,17 +3,19 @@ title: "Group 4: Milestone 2"
 output: html
 ---
 
-Milestone #2 Objective: Dataset imported into R; identify key data elements and their data type.
+Milestone #2 
 
-Description of dataset:
 
-What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
+**Objective:** Dataset imported into R; identify key data elements and their data type.
 
-*The source of the data is a (simulated) infectious disease outbreak in California, including weekly case data for all counties except for LA, a similar data set for cases in Los Angeles county, and 2023 California population data. The population data will allow for stratification by demographic and geographic factors.*
+**Description of dataset:**
 
-How does the dataset relate to the group problem statement and question?
+The source of the data is a (simulated) infectious disease outbreak in California, including weekly case data for all counties except for LA, a similar data set for cases in Los Angeles county, and 2023 California population data. The population data will allow for stratification by demographic and geographic factors.
 
-*The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prevention of the outbreak.*
+The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prvention of the outbreak.
+
+**Import statements for all datasets**
+
 
 ```{r}
 
@@ -23,9 +25,7 @@ la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 
 ```
 
-
-```{r}
-#Clean up column names (use snake case)
+**Clean up column names (snake case)** sim_novelid_CA and ca_pop_2023 were already in snake case, but the LA county data needs tidying.
 
 #Danielle, this code did not work for me. 
 
@@ -35,6 +35,9 @@ la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 
 
 #I am using the "janitor::clean_names()" function.
+
+```{r}
+
 
 ca_cases <- janitor::clean_names(ca_cases)
 
@@ -47,47 +50,57 @@ la_cases
 ca_pop
 ```
 
+**Data Types** Identify data types for 5+ data elements/columns/variables
 
-Identify data types for 5+ data elements/columns/variables.
+**Identify 5+ data elements required for your specified scenario. If \<5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.**
 
-*Answer here*
+Variables needed: demographic and geographic
 
-Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional #variables of interest in the data set to explore in this milestone.
+**Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor). Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type?**
 
-*Answer here*
-
-Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
-
-*Answer here*
-
-Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
-
-*Yes, in dataframe "ca_cases", the column race_ethnicity will need to be converted to character data*
-
-Desired type/format for:
-
-*AGE : numeric, RACE : character, SEX : logic, COUNTY : character*
-
-Provide a basic description of the 5+ data elements:
-
-Numeric: mean, median, range
+Yes, in dataframe "ca_cases", the column race_ethnicity will need to be converted to character data*
 
 
-Character: unique values/categories
+AGE : numeric, 
+RACE : character, 
+SEX : logic, 
+COUNTY : character
 
 
-Or any other descriptives that will be useful to the analysis:
+**Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)**
 
-Describe cleaning that each data source may need:
+```{r}
 
-*Column names should be standardized (using snake_case) to make future calculations easier, especially between the LA country data and the data for the rest of the state.* 
+typeof(ca_cases$sex)
+typeof(la_cases$sex)
+typeof(ca_cases$county)
+typeof(la_cases$race_eth)
+typeof(ca_cases$race_ethnicity)
+class(ca_cases$race_ethnicity)
+#age_category and age_cat
 
-NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data! Please list out the anticipated data cleaning needed. 
-Examples:
-Data elements that need to be converted to a different type
-Data elements that need cleaning or re-categorization
-Data elements that may be used for future joins (i.e. state, county)
+```
+
+**Provide a basic description of the 5+ data elements:**
+
+```{r}
+#Numeric: mean, median, range
+#it might be easier to convert la_cases to nuneric values for race_eth, but maybe I just find numerics easier to work with
+mean(ca_cases$race_ethnicity)
 
 
+#Character: unique values/categories
+#Any other descriptives that will be useful to the analysis
 
 
+```
+
+**Describe cleaning that each data source may need:**
+
+Column names and data types should be standardized to make future calculations easier, especially between the LA country data and the data for the rest of the state. For example, race_ethnicity provides demographic information numerically in ca_cases, but race_eth in la_cases provides a written description. The California population data needs some tidying of the column titles, aside from just snake_case - "race" is "race7". 
+
+*NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data!*
+
+Please list out the anticipated data cleaning needed. Examples: Data elements that need to be converted to a different type Data elements that need cleaning or re-categorization Data elements that may be used for future joins (i.e. state, county)
+
+Future joins: la_cases and ca_cases for data of the whole state, to allow for comparison with the ca_pop data. 
