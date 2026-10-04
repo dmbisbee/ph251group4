@@ -50,13 +50,23 @@ ca_pop
 
 Identify data types for 5+ data elements/columns/variables.
 
+*Answer here*
+
 Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional #variables of interest in the data set to explore in this milestone.
 
+*Answer here*
 
 Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
 
+*Answer here*
 
 Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
+
+*Yes, in dataframe "ca_cases", the column race_ethnicity will need to be converted to character data*
+
+Desired type/format for:
+
+*AGE : numeric, RACE : character, SEX : logic, COUNTY : character*
 
 Provide a basic description of the 5+ data elements:
 
