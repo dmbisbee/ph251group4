@@ -6,11 +6,14 @@ output: html
 Milestone #2 Objective: Dataset imported into R; identify key data elements and their data type.
 
 Description of dataset:
+
 What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)
-The source of the data is a (simulated) infectious disease outbreak in California, including weekly case data for all counties except for LA, a similar data set for cases in Los Angeles county, and 2023 California population data. The population data will allow for stratification by demographic and geographic factors.
+
+*The source of the data is a (simulated) infectious disease outbreak in California, including weekly case data for all counties except for LA, a similar data set for cases in Los Angeles county, and 2023 California population data. The population data will allow for stratification by demographic and geographic factors.*
 
 How does the dataset relate to the group problem statement and question?
-The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prvention of the outbreak.
+
+*The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prevention of the outbreak.*
 
 ```{r}
 
@@ -24,7 +27,7 @@ la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
 ```{r}
 #Clean up column names (use snake case)
 
-#Danielle, these codes did not work for me. 
+#Danielle, this code did not work for me. 
 
 #snake_case(ca_cases)
 #snake_case(ca_pop)
@@ -42,51 +45,39 @@ ca_pop <- janitor::clean_names(ca_pop)
 ca_cases
 la_cases
 ca_pop
-
-
-```
-
-```{r}
-#Identify data types for 5+ data elements/columns/variables
-
-#Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional #variables of interest in the data set to explore in this milestone.
-
-
-
-#Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
-
-
-
-
-#Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
-
-
-
 ```
 
 
+Identify data types for 5+ data elements/columns/variables.
+
+Identify 5+ data elements required for your specified scenario. If <5 elements are required to complete the analysis, please choose additional #variables of interest in the data set to explore in this milestone.
 
 
-```{r}
-#Provide a basic description of the 5+ data elements:
-
-#Numeric: mean, median, range
+Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)
 
 
-#Character: unique values/categories
+Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type? 
+
+Provide a basic description of the 5+ data elements:
+
+Numeric: mean, median, range
 
 
-#Or any other descriptives that will be useful to the analysis
+Character: unique values/categories
 
 
-
-```
+Or any other descriptives that will be useful to the analysis:
 
 Describe cleaning that each data source may need:
-Column names should be standardized (using snake_case) to make future calculations easier, especially between the LA country data and the data for the rest of the state. 
+
+*Column names should be standardized (using snake_case) to make future calculations easier, especially between the LA country data and the data for the rest of the state.* 
 
 NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data! Please list out the anticipated data cleaning needed. 
 Examples:
 Data elements that need to be converted to a different type
 Data elements that need cleaning or re-categorization
 Data elements that may be used for future joins (i.e. state, county)
+
+
+
+
