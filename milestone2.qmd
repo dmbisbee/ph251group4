@@ -1,0 +1,166 @@
+ 
+---
+title: "Group 4: Milestone 2"
+format: html
+---
+
+
+Milestone #2 
+
+
+**Objective:** Dataset imported into R; identify key data elements and their data type.
+
+**Description of dataset:**
+
+The three course-provided datasets are about a (simulated) infectious disease outbreak in California sim_novelid_CA-csv, including weekly case data for all counties except for LA sim_novelid_LACounty.csv, a similar data set for cases in Los Angeles county, and 2023 California population data ca_pop_2023.csv. The population data will allow for stratification by demographic and geographic factors. Population estimates will also provide demonimators for calculating rates. 
+
+The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prvention of the outbreak.
+
+**Import statements for all datasets**
+
+
+```{r}
+
+ca_cases <- readr::read_csv("sim_novelid_CA.csv")
+ca_pop <- readr::read_csv("ca_pop_2023.csv")
+la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
+
+```
+
+**Clean up column names (snake case)** sim_novelid_CA and ca_pop_2023 were already in snake case, but the LA county data needs tidying.
+
+#Danielle, this code did not work for me. 
+
+#snake_case(ca_cases)
+#snake_case(ca_pop)
+#snake_case(la_cases)
+
+
+#I am using the "janitor::clean_names()" function.
+
+```{r}
+
+
+ca_cases <- janitor::clean_names(ca_cases)
+
+la_cases <- janitor::clean_names(la_cases)
+
+ca_pop <- janitor::clean_names(ca_pop)
+
+ca_cases
+la_cases
+ca_pop
+```
+
+**Data Types** 
+**Identify data types for 5+ data elements/columns/variables**
+
+county = categorical 
+age_cat = categorical in this case since it groups cases into rages (e.g. 0-4, 5-11, etc)
+sex = categorical
+race_ethnicity = categorical
+dt_diagnosis = is a date; saved in R as numerical data, but it's categorical because it groups cases based on date of diagnosis.
+pop = numerical data
+
+
+**Identify 5+ data elements required for your specified scenario. If \<5 elements are required to complete the analysis, please choose additional variables of interest in the data set to explore in this milestone.**
+
+Variables needed: demographic and geographic. 
+
+Variables: 
+
+county : to compare geographic areas
+age_cat : to compare age groups
+race_ethnicity : to assess any differences among racial/ethnic groups
+dt_diagnosis : to track how case numbers change over time
+pop : to calculate rates between groups of different sizes (ill vs not ill)
+dt_diganosis and dt_dx to compare number of cases per week. 
+
+
+
+**will you need to convert any columns to numeric or another type?**
+
+Yes, in dataframe "ca_cases", the column race_ethnicity will need to be converted from numerical to character data and used as categorical data.
+
+We'll need to confirm that dt_diagnosis and dt_dx are imported as Dates and convert them if needed. 
+
+
+**Utilize functions or resources in RStudio to determine the types of each data element (i.e. character, numeric, factor)**
+
+```{r}
+
+str(ca_cases)
+str(la_cases)
+str(ca_pop)
+
+
+typeof(ca_cases$sex)
+typeof(la_cases$sex)
+typeof(ca_cases$county)
+typeof(la_cases$race_eth)
+typeof(ca_cases$race_ethnicity)
+
+class(ca_cases$race_ethnicity)
+
+
+summary(ca_cases)
+summary(la_cases)
+summary(ca_pop)
+
+```
+
+**Provide a basic description of the 5+ data elements:**
+
+**Numeric:** 
+
+mean, median, range. These are useful for assessing central tendency. 
+
+new_infections (numeric)
+new_severe (numeric)
+pop (numeric)
+
+**Character:** 
+
+unique values, categories
+
+county (character)
+sex (character)
+dt_diagnosis (date)
+race_ethnicity(categorical but stored as a number at this time)
+
+
+```{r}
+
+#to get mean, median and range, we can use the summary() function
+
+summary(ca_cases$new_infections)
+summary(ca_cases$new_severe)
+summary(la_cases$dx_new)
+summary(la_cases$severe_new)
+
+
+#we can use the str() to get an overview of what's actually in the dataframe
+
+str(ca_cases)
+str(la_cases)
+str(ca_pop)
+
+```
+
+
+**Describe cleaning that each data source may need:**
+
+Column names and data types should be standardized to make future calculations easier, especially between the LA country data and the data for the rest of the state. For example, race_ethnicity provides demographic information numerically in ca_cases, but race_eth in la_cases provides a written description. The California population data needs some tidying of the column titles, aside from just snake_case - "race" is "race7". 
+
+**NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data!**
+
+**Please list out the anticipated data cleaning needed. Examples: Data elements that need to be converted to a different type Data elements that need cleaning or re-categorization Data elements that may be used for future joins (i.e. state, county)**
+
+Future joins: la_cases and ca_cases for data of the whole state, to allow for comparison with the ca_pop data. 
+Determine what each race code means in ca_cases for the column race_ethnicity. 
+Check for missing values. 
+Ensure dates are 
+Decide when to remove N/As
+
+
+

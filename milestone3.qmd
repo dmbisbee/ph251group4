@@ -10,7 +10,6 @@ Data Re-structuring as needed (aggregated/summarized and/or pivoted)
 Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description
 One or more tables with descriptive statistics for 4 data elements
 
-
 ```{r packages, include = F}
 
 #library(readr)
@@ -30,6 +29,7 @@ ca_pop <- readr::read_csv("data/ca_pop_2023.csv")
 
 ## Morbidity datasets (from CA and LA County) ##
 ### Recode column names, values, or formats that are in discordant (dates, etc) ###
+<<<<<<< HEAD
 ```{r clean column names}
 
 la_cases <- clean_names(la_cases)
@@ -52,6 +52,22 @@ la_cases <- la_cases %>%
 ```
 
 
+=======
+```{r}
+
+la_cases <- clean_names(la_cases)
+ca_cases <- clean_names(ca_cases)
+la_cases <- la_cases %>% 
+  rename(
+    dt_diagnosis = dt_dx,
+    race_ethnicity = race_eth)
+
+head(ca_cases)
+head(la_cases)
+
+```
+
+>>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8
 ### Combine morbidity datasets into a single dataset ###
 ```{r}
 
