@@ -16,6 +16,8 @@ One or more tables with descriptive statistics for 4 data elements
 library(tidyverse)
 library(janitor)
 library(lubridate)
+#install.packages("aweek")
+library(aweek)
 
 ```
 
@@ -28,50 +30,62 @@ ca_pop <- readr::read_csv("data/ca_pop_2023.csv")
 ```
 
 ## Morbidity datasets (from CA and LA County) ##
-### Recode column names, values, or formats that are in discordant (dates, etc) ###
-<<<<<<< HEAD
+### Recode discordant column names, values, and formats ###
 ```{r clean column names}
 
+#snakecase column titles
 la_cases <- clean_names(la_cases)
 ca_cases <- clean_names(ca_cases)
 
-la_cases <- la_cases %>% 
-  rename(dt_diagnosis = dt_dx,
-        race_ethnicity = race_eth)
+#tidying la_cases
+la_cases_clean <- la_cases %>%
+    rename(age_cat = age_category,
+           cumulative_infected = infected_cumulative,
+           cumulative_unrecovered = unrecovered_cumulative,
+           cumulative_severe = severe_cumulative,
+           new_severe = severe_new,
+           new_unrecovered = unrecovered_new) %>%
+  # filling the dt_report column with the dt_dx in epi_week format
+    mutate(dt_dx = dmy(dt_dx),
+           county = "Los Angeles County", #adding a county column for future merge with ca_cases
+           dt_report = gsub("-", "", format(as.Date(aweek::date2week(dt_dx, week_start = "Sunday")), "%Y-%U")))
 
-ca_cases <- ca_cases %>% 
-  rename(age_category = age_cat)
+# making dt_report numeric to match ca_cases
+la_cases_clean$dt_report <- as.numeric(la_cases_clean$dt_report)
+
+# tidying ca_cases
+ ca_cases_clean <- ca_cases %>%
+   rename(race_eth = race_ethnicity,
+          dt_dx = dt_diagnosis,
+          dx_new = new_infections,
+          dt_report = time_int)  %>%
+   mutate(race_eth = case_when(
+          race_eth == 1 ~ "White, Non-Hispanic",
+          race_eth == 2 ~ "Black, Non-Hispanic",
+          race_eth == 3 ~ "American Indian or Alaska Native, Non-Hispanic",
+          race_eth == 4 ~ "Asian, Non-Hispanic",
+          race_eth == 5 ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+          race_eth == 6 ~ "Multiracial (two or more of above races), Non-Hispanic",
+          race_eth == 7 ~ "Hispanic (any race)",
+          race_eth == 9 ~ "Unknown",
+          TRUE ~ NA_character_))
+ 
+# alphabetizing column names for easier comparison
+la_cases_clean <- la_cases_clean %>% select(sort(names(.)))
+ca_cases_clean <- ca_cases_clean %>% select(sort(names(.)))
+
+glimpse(la_cases_clean)
+glimpse(ca_cases_clean)
+
+# column titles and data types match - ready to merge!
 
 ```
 
-```{r tidy dates}
 
-la_cases <- la_cases %>%
-  mutate(dt_diagnosis = dmy(dt_diagnosis))
-
-```
-
-
-=======
-```{r}
-
-la_cases <- clean_names(la_cases)
-ca_cases <- clean_names(ca_cases)
-la_cases <- la_cases %>% 
-  rename(
-    dt_diagnosis = dt_dx,
-    race_ethnicity = race_eth)
-
-head(ca_cases)
-head(la_cases)
-
-```
-
->>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8
 ### Combine morbidity datasets into a single dataset ###
 ```{r}
 
-
+combined_cases <- bind_rows(ca_cases_clean, la_cases_clean)
 
 ```
 

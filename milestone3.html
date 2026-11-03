@@ -79,15 +79,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<<<<<<< HEAD
-<<<<<<<< HEAD:milestone3.html
 <h1 class="title">PH251 Group 4 Milestone 3</h1>
-========
-<h1 class="title">Group 4: Milestone 2</h1>
->>>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8:milestone2.html
-=======
-<h1 class="title">PH251 Group 4 Milestone 3</h1>
->>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8
 </div>
 
 
@@ -104,40 +96,132 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<<<<<<< HEAD
-<<<<<<<< HEAD:milestone3.html
 <p><strong>Milestone 3 Components:</strong> # I’ll delete this before submitting, but it’s helpful for now! Subset rows or columns, as needed Create new variables needed for analysis (minimum 2) Clean variables needed for analysis (minimum 2) Data Re-structuring as needed (aggregated/summarized and/or pivoted) Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description One or more tables with descriptive statistics for 4 data elements</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/sim_novelid_CA.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 98952 Columns: 12
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (3): county, age_cat, sex
+dbl  (8): race_ethnicity, time_int, new_infections, cumulative_infected, new...
+date (1): dt_diagnosis
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/sim_novelid_LACounty.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1736 Columns: 11
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (4): DT_DX, AGE_CATEGORY, SEX, RACE_ETH
+dbl (6): DX_NEW, INFECTED_CUMULATIVE, UNRECOVERED_NEW, UNRECOVERED_CUMULATIV...
+lgl (1): DT_REPORT
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ca_pop <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/ca_pop_2023.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 90132 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (5): county, health_officer_region, age_cat, sex, race7
+dbl (1): pop
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+</div>
 <section id="morbidity-datasets-from-ca-and-la-county" class="level2">
 <h2 class="anchored" data-anchor-id="morbidity-datasets-from-ca-and-la-county">Morbidity datasets (from CA and LA County)</h2>
-<section id="recode-column-names-values-or-formats-that-are-in-discordant-dates-etc" class="level3">
-<h3 class="anchored" data-anchor-id="recode-column-names-values-or-formats-that-are-in-discordant-dates-etc">Recode column names, values, or formats that are in discordant (dates, etc)</h3>
-========
-<p>Milestone #2 Objective: Dataset imported into R; identify key data elements and their data type.</p>
-<p>Description of dataset:</p>
-<p>What is the data source? (1-2 sentences on where the data is coming from, dates included, etc.)</p>
-<p><em>The source of the data is a (simulated) infectious disease outbreak in California, including weekly case data for all counties except for LA, a similar data set for cases in Los Angeles county, and 2023 California population data. The population data will allow for stratification by demographic and geographic factors.</em></p>
-<p>How does the dataset relate to the group problem statement and question?</p>
-<p><em>The demographic information included in the dataset will allow for analysis into whether certain populations are more at risk. Demographic and geographic trends will indicate how resources should be allocated for the treatment and prevention of the outbreak.</em></p>
->>>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8:milestone2.html
+<section id="recode-discordant-column-names-values-and-formats" class="level3">
+<h3 class="anchored" data-anchor-id="recode-discordant-column-names-values-and-formats">Recode discordant column names, values, and formats</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(la_cases)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(ca_cases)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> la_cases <span class="sc">%&gt;%</span> </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">dt_diagnosis =</span> dt_dx,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">race_ethnicity =</span> race_eth)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> ca_cases <span class="sc">%&gt;%</span> </span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">age_category =</span> age_cat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#snakecase column titles</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(la_cases)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(ca_cases)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#tidying la_cases</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>la_cases_clean <span class="ot">&lt;-</span> la_cases <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">age_cat =</span> age_category,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">cumulative_infected =</span> infected_cumulative,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">cumulative_unrecovered =</span> unrecovered_cumulative,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">cumulative_severe =</span> severe_cumulative,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">new_severe =</span> severe_new,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">new_unrecovered =</span> unrecovered_new) <span class="sc">%&gt;%</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># filling the dt_report column with the dt_dx in epi_week format</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">dt_dx =</span> <span class="fu">dmy</span>(dt_dx),</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>           <span class="at">county =</span> <span class="st">"Los Angeles County"</span>, <span class="co">#adding a county column for future merge with ca_cases</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>           <span class="at">dt_report =</span> <span class="fu">gsub</span>(<span class="st">"-"</span>, <span class="st">""</span>, <span class="fu">format</span>(<span class="fu">as.Date</span>(aweek<span class="sc">::</span><span class="fu">date2week</span>(dt_dx, <span class="at">week_start =</span> <span class="st">"Sunday"</span>)), <span class="st">"%Y-%U"</span>)))</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># making dt_report numeric to match ca_cases</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>la_cases_clean<span class="sc">$</span>dt_report <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(la_cases_clean<span class="sc">$</span>dt_report)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># tidying ca_cases</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a> ca_cases_clean <span class="ot">&lt;-</span> ca_cases <span class="sc">%&gt;%</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>   <span class="fu">rename</span>(<span class="at">race_eth =</span> race_ethnicity,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>          <span class="at">dt_dx =</span> dt_diagnosis,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>          <span class="at">dx_new =</span> new_infections,</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>          <span class="at">dt_report =</span> time_int)  <span class="sc">%&gt;%</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">race_eth =</span> <span class="fu">case_when</span>(</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">1</span> <span class="sc">~</span> <span class="st">"White, Non-Hispanic"</span>,</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">2</span> <span class="sc">~</span> <span class="st">"Black, Non-Hispanic"</span>,</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">3</span> <span class="sc">~</span> <span class="st">"American Indian or Alaska Native, Non-Hispanic"</span>,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">4</span> <span class="sc">~</span> <span class="st">"Asian, Non-Hispanic"</span>,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">5</span> <span class="sc">~</span> <span class="st">"Native Hawaiian or Pacific Islander, Non-Hispanic"</span>,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">6</span> <span class="sc">~</span> <span class="st">"Multiracial (two or more of above races), Non-Hispanic"</span>,</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">7</span> <span class="sc">~</span> <span class="st">"Hispanic (any race)"</span>,</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>          race_eth <span class="sc">==</span> <span class="dv">9</span> <span class="sc">~</span> <span class="st">"Unknown"</span>,</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span>))</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co"># alphabetizing column names for easier comparison</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>la_cases_clean <span class="ot">&lt;-</span> la_cases_clean <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">sort</span>(<span class="fu">names</span>(.)))</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>ca_cases_clean <span class="ot">&lt;-</span> ca_cases_clean <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">sort</span>(<span class="fu">names</span>(.)))</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(la_cases_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,736
+Columns: 12
+$ age_cat                &lt;chr&gt; "0-17", "0-17", "0-17", "0-17", "0-17", "0-17",…
+$ county                 &lt;chr&gt; "Los Angeles County", "Los Angeles County", "Lo…
+$ cumulative_infected    &lt;dbl&gt; 15, 32, 55, 106, 173, 248, 354, 437, 528, 701, …
+$ cumulative_severe      &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ cumulative_unrecovered &lt;dbl&gt; 0, 0, 0, 0, 1, 2, 6, 9, 10, 13, 15, 19, 25, 30,…
+$ dt_dx                  &lt;date&gt; 2023-05-29, 2023-06-05, 2023-06-12, 2023-06-19…
+$ dt_report              &lt;dbl&gt; 202322, 202323, 202324, 202325, 202326, 202327,…
+$ dx_new                 &lt;dbl&gt; 15, 17, 23, 51, 67, 75, 106, 83, 91, 173, 162, …
+$ new_severe             &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ new_unrecovered        &lt;dbl&gt; 0, 0, 0, 0, 1, 1, 4, 3, 1, 3, 2, 4, 6, 5, 9, 7,…
+$ race_eth               &lt;chr&gt; "White, Non-Hispanic", "White, Non-Hispanic", "…
+$ sex                    &lt;chr&gt; "FEMALE", "FEMALE", "FEMALE", "FEMALE", "FEMALE…</code></pre>
 </div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> la_cases <span class="sc">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dt_diagnosis =</span> <span class="fu">dmy</span>(dt_diagnosis))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(ca_cases_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 98,952
+Columns: 12
+$ age_cat                &lt;chr&gt; "0-17", "0-17", "0-17", "0-17", "0-17", "0-17",…
+$ county                 &lt;chr&gt; "Alameda County", "Alameda County", "Alameda Co…
+$ cumulative_infected    &lt;dbl&gt; 6, 7, 9, 19, 38, 63, 86, 104, 126, 161, 190, 23…
+$ cumulative_severe      &lt;dbl&gt; 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
+$ cumulative_unrecovered &lt;dbl&gt; 0, 1, 1, 1, 1, 2, 2, 3, 4, 5, 6, 6, 7, 7, 10, 1…
+$ dt_dx                  &lt;date&gt; 2023-05-29, 2023-06-05, 2023-06-12, 2023-06-19…
+$ dt_report              &lt;dbl&gt; 202322, 202323, 202324, 202325, 202326, 202327,…
+$ dx_new                 &lt;dbl&gt; 6, 1, 2, 10, 19, 25, 23, 18, 22, 35, 29, 43, 69…
+$ new_severe             &lt;dbl&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+$ new_unrecovered        &lt;dbl&gt; 0, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 3, 2,…
+$ race_eth               &lt;chr&gt; "White, Non-Hispanic", "White, Non-Hispanic", "…
+$ sex                    &lt;chr&gt; "FEMALE", "FEMALE", "FEMALE", "FEMALE", "FEMALE…</code></pre>
 </div>
-<<<<<<<< HEAD:milestone3.html
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># column titles and data types match - ready to merge!</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="combine-morbidity-datasets-into-a-single-dataset" class="level3">
 <h3 class="anchored" data-anchor-id="combine-morbidity-datasets-into-a-single-dataset">Combine morbidity datasets into a single dataset</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>combined_cases <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(ca_cases_clean, la_cases_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="select-demographic-and-geographic-stratas-of-interest" class="level3">
 <h3 class="anchored" data-anchor-id="select-demographic-and-geographic-stratas-of-interest">Select demographic and geographic strata(s) of interest</h3>
@@ -158,155 +242,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="create-a-rate-metric-and-summarize-to-include-only-one-row-per-strata-of-interest">Create a rate metric and summarize to include only one row per strata of interest</h3>
 </section>
 </section>
-========
-=======
-<p><strong>Morbidity datasets (from CA and LA County)</strong> - Recode column names, values, or formats that are in discordant (dates, etc) - Combine morbidity datasets into a single dataset - Select demographic and geographic strata (s) of interest - Aggregate the data into a new dataframe to include only one row per strata of interest</p>
-<p><strong>Population dataset</strong> - Recode values to be consistent with morbidity datasets so they can be joined - Select demographic or geogrphic strata(s) of interest - Create a rate metric and summarize to include only one row per strata of interest</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"sim_novelid_CA.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 98952 Columns: 12
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr  (3): county, age_cat, sex
-dbl  (8): race_ethnicity, time_int, new_infections, cumulative_infected, new...
-date (1): dt_diagnosis
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ca_pop <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"ca_pop_2023.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 90132 Columns: 6
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (5): county, health_officer_region, age_cat, sex, race7
-dbl (1): pop
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
->>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"sim_novelid_LACounty.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 1736 Columns: 11
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (4): DT_DX, AGE_CATEGORY, SEX, RACE_ETH
-dbl (6): DX_NEW, INFECTED_CUMULATIVE, UNRECOVERED_NEW, UNRECOVERED_CUMULATIV...
-lgl (1): DT_REPORT
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-</div>
-<<<<<<< HEAD
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Clean up column names (use snake case)</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Danielle, this code did not work for me. </span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#snake_case(ca_cases)</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#snake_case(ca_pop)</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#snake_case(la_cases)</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#I am using the "janitor::clean_names()" function.</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(ca_cases)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>la_cases <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(la_cases)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>ca_pop <span class="ot">&lt;-</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>(ca_pop)</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>ca_cases</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 98,952 × 12
-   county      age_cat sex   race_ethnicity dt_diagnosis time_int new_infections
-   &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;date&gt;          &lt;dbl&gt;          &lt;dbl&gt;
- 1 Alameda Co… 0-17    FEMA…              1 2023-05-29     202322              6
- 2 Alameda Co… 0-17    FEMA…              1 2023-06-05     202323              1
- 3 Alameda Co… 0-17    FEMA…              1 2023-06-12     202324              2
- 4 Alameda Co… 0-17    FEMA…              1 2023-06-19     202325             10
- 5 Alameda Co… 0-17    FEMA…              1 2023-06-26     202326             19
- 6 Alameda Co… 0-17    FEMA…              1 2023-07-03     202327             25
- 7 Alameda Co… 0-17    FEMA…              1 2023-07-10     202328             23
- 8 Alameda Co… 0-17    FEMA…              1 2023-07-17     202329             18
- 9 Alameda Co… 0-17    FEMA…              1 2023-07-24     202330             22
-10 Alameda Co… 0-17    FEMA…              1 2023-07-31     202331             35
-# ℹ 98,942 more rows
-# ℹ 5 more variables: cumulative_infected &lt;dbl&gt;, new_unrecovered &lt;dbl&gt;,
-#   cumulative_unrecovered &lt;dbl&gt;, new_severe &lt;dbl&gt;, cumulative_severe &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>la_cases</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 1,736 × 11
-   dt_dx     age_category sex    race_eth   dt_report dx_new infected_cumulative
-   &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;  &lt;chr&gt;      &lt;lgl&gt;      &lt;dbl&gt;               &lt;dbl&gt;
- 1 29MAY2023 0-17         FEMALE White, No… NA            15                  15
- 2 05JUN2023 0-17         FEMALE White, No… NA            17                  32
- 3 12JUN2023 0-17         FEMALE White, No… NA            23                  55
- 4 19JUN2023 0-17         FEMALE White, No… NA            51                 106
- 5 26JUN2023 0-17         FEMALE White, No… NA            67                 173
- 6 03JUL2023 0-17         FEMALE White, No… NA            75                 248
- 7 10JUL2023 0-17         FEMALE White, No… NA           106                 354
- 8 17JUL2023 0-17         FEMALE White, No… NA            83                 437
- 9 24JUL2023 0-17         FEMALE White, No… NA            91                 528
-10 31JUL2023 0-17         FEMALE White, No… NA           173                 701
-# ℹ 1,726 more rows
-# ℹ 4 more variables: unrecovered_new &lt;dbl&gt;, unrecovered_cumulative &lt;dbl&gt;,
-#   severe_new &lt;dbl&gt;, severe_cumulative &lt;dbl&gt;</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ca_pop</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 90,132 × 6
-   county  health_officer_region age_cat sex    race7        pop
-   &lt;chr&gt;   &lt;chr&gt;                 &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;      &lt;dbl&gt;
- 1 Alameda Bay Area              0-4     FEMALE WhiteTE NH  2008
- 2 Alameda Bay Area              0-4     FEMALE WhiteTE NH  2128
- 3 Alameda Bay Area              0-4     FEMALE WhiteTE NH  2142
- 4 Alameda Bay Area              0-4     FEMALE WhiteTE NH  2057
- 5 Alameda Bay Area              0-4     FEMALE WhiteTE NH  1965
- 6 Alameda Bay Area              5-11    FEMALE WhiteTE NH  2017
- 7 Alameda Bay Area              5-11    FEMALE WhiteTE NH  1835
- 8 Alameda Bay Area              5-11    FEMALE WhiteTE NH  1840
- 9 Alameda Bay Area              5-11    FEMALE WhiteTE NH  1911
-10 Alameda Bay Area              5-11    FEMALE WhiteTE NH  1935
-# ℹ 90,122 more rows</code></pre>
-</div>
-</div>
-<p>Identify data types for 5+ data elements/columns/variables.</p>
-<p>Identify 5+ data elements required for your specified scenario. If &lt;5 elements are required to complete the analysis, please choose additional #variables of interest in the data set to explore in this milestone.</p>
-<p>Utilize functions or resources in RStudio to determine the types of each data element (i.e.&nbsp;character, numeric, factor)</p>
-<p>Identify the desired type/format for each variable—will you need to convert any columns to numeric or another type?</p>
-<p>Provide a basic description of the 5+ data elements:</p>
-<p>Numeric: mean, median, range</p>
-<p>Character: unique values/categories</p>
-<p>Or any other descriptives that will be useful to the analysis:</p>
-<p>Describe cleaning that each data source may need:</p>
-<p><em>Column names should be standardized (using snake_case) to make future calculations easier, especially between the LA country data and the data for the rest of the state.</em></p>
-<p>NOTE: There is no requirement for any data cleaning in this milestone, but there may be cleaning you can do when you import your data! Please list out the anticipated data cleaning needed. Examples: Data elements that need to be converted to a different type Data elements that need cleaning or re-categorization Data elements that may be used for future joins (i.e.&nbsp;state, county)</p>
->>>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8:milestone2.html
-=======
-<section id="subset-rows-or-columns-as-needed" class="level2">
-<h2 class="anchored" data-anchor-id="subset-rows-or-columns-as-needed">Subset rows or columns, as needed</h2>
-</section>
-<section id="create-new-variables-needed-for-analysis-min-2" class="level2">
-<h2 class="anchored" data-anchor-id="create-new-variables-needed-for-analysis-min-2">Create new variables needed for analysis (min 2)</h2>
-</section>
-<section id="clean-variables-needed-for-analysis-minimum-2" class="level2">
-<h2 class="anchored" data-anchor-id="clean-variables-needed-for-analysis-minimum-2">Clean variables needed for analysis (minimum 2)</h2>
-</section>
-<section id="data-re-structuring-as-needed-aggregatedsummarized-andor-pivoted" class="level2">
-<h2 class="anchored" data-anchor-id="data-re-structuring-as-needed-aggregatedsummarized-andor-pivoted">Data Re-structuring as needed (aggregated/summarized and/or pivoted)</h2>
-</section>
-<section id="data-dictionary-based-on-clean-dataset-minimum-4-data-elements-including-variable-name-data-type-description" class="level2">
-<h2 class="anchored" data-anchor-id="data-dictionary-based-on-clean-dataset-minimum-4-data-elements-including-variable-name-data-type-description">Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description</h2>
-</section>
-<section id="one-or-more-tables-with-descriptive-statistics-for-4-data-elements" class="level2">
-<h2 class="anchored" data-anchor-id="one-or-more-tables-with-descriptive-statistics-for-4-data-elements">One or more tables with descriptive statistics for 4 data elements</h2>
-</section>
->>>>>>> 334188d8499b40e6ff8ee513317c379642708dd8
 
 </main>
 <!-- /main column -->
