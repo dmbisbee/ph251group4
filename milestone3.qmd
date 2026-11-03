@@ -1,0 +1,82 @@
+---
+title: "PH251 Group 4 Milestone 3"
+format: html
+---
+**Milestone 3 Components:** # I'll delete this before submitting, but it's helpful for now!
+Subset rows or columns, as needed
+Create new variables needed for analysis (minimum 2)
+Clean variables needed for analysis (minimum 2)
+Data Re-structuring as needed (aggregated/summarized and/or pivoted)
+Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description
+One or more tables with descriptive statistics for 4 data elements
+
+
+```{r import packages and data}
+
+#library(readr)
+library(tidyverse)
+library(janitor)
+
+ca_cases <- readr::read_csv("sim_novelid_CA.csv")
+ca_pop <- readr::read_csv("ca_pop_2023.csv")
+la_cases <- readr::read_csv("sim_novelid_LACounty.csv")
+
+```
+
+## Morbidity datasets (from CA and LA County) ##
+### Recode column names, values, or formats that are in discordant (dates, etc) ###
+```{r}
+
+la_cases <- clean_names(la_cases)
+ca_cases <- clean_names(ca_cases)
+la_cases <- la_cases %>% 
+  rename(
+    dt_diagnosis = dt_dx,
+    race_ethnicity = race_eth)
+
+head(ca_cases)
+head(la_cases)
+
+```
+
+### Combine morbidity datasets into a single dataset ###
+```{r}
+
+
+
+```
+
+### Select demographic and geographic strata(s) of interest ###
+```{r}
+
+
+
+```
+
+### Aggregate the data into a new dataframe to include only one row per strata of interest ###
+```{r}
+
+
+
+```
+
+
+## Population dataset ##
+### Recode values to be consistent with morbidity datasets so they can be joined ###
+```{r recode for consistency}
+
+
+
+```
+
+### Select demographic or geogrphic strata(s) of interest ###
+```{r demograpgic and geograpgic strata}
+
+
+```
+
+### Create a rate metric and summarize to include only one row per strata of interest ###
+```{r rate}
+
+
+```
