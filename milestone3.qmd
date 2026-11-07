@@ -2,11 +2,12 @@
 title: "PH251 Group 4 Milestone 3"
 format: html
 ---
-**Milestone 3 Components:** # I'll delete this before submitting, but it's helpful for now!
+# I'll delete this before submitting, but it's helpful for now :)
+**Milestone 3 Components:** 
 Subset rows or columns, as needed
-Create new variables needed for analysis (minimum 2)
-Clean variables needed for analysis (minimum 2)
-Data Re-structuring as needed (aggregated/summarized and/or pivoted)
+#mostly done! Create new variables needed for analysis (minimum 2)
+#done! Clean variables needed for analysis (minimum 2)
+#done! Data Re-structuring as needed (aggregated/summarized and/or pivoted)
 Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description
 One or more tables with descriptive statistics for 4 data elements
 
@@ -92,14 +93,28 @@ combined_cases <- bind_rows(ca_cases_clean, la_cases_clean)
 ### Select demographic and geographic strata(s) of interest ###
 ```{r}
 
-
+#I think this chunk can get deleted because I'm not really sure what to include
 
 ```
 
 ### Aggregate the data into a new dataframe to include only one row per strata of interest ###
 ```{r}
 
+aggregated_cases_race <- combined_cases %>%
+  group_by(race_eth) %>%
+  summarise(
+    cumulative_infected = max(cumulative_infected, na.rm = TRUE),
+    cumulative_severe = max(cumulative_severe, na.rm = TRUE),
+    cumulative_unrecovered = max(cumulative_unrecovered, na.rm = TRUE),
+    .groups = "drop")
 
+aggregated_cases_county <- combined_cases %>%
+  group_by(county) %>%
+  summarise(
+    cumulative_infected = max(cumulative_infected, na.rm = TRUE),
+    cumulative_severe = max(cumulative_severe, na.rm = TRUE),
+    cumulative_unrecovered = max(cumulative_unrecovered, na.rm = TRUE),
+    .groups = "drop")
 
 ```
 
@@ -108,18 +123,59 @@ combined_cases <- bind_rows(ca_cases_clean, la_cases_clean)
 ### Recode values to be consistent with morbidity datasets so they can be joined ###
 ```{r recode for consistency}
 
+ca_pop <- clean_names(ca_pop)
 
+ca_pop_clean <- ca_pop %>%
+    rename(race_eth = race7)  %>%
+    mutate(race_eth = case_when(
+           race_eth == "WhiteTE NH" ~ "White, Non-Hispanic",
+           race_eth == "Black NH" ~ "Black, Non-Hispanic",
+           race_eth == "AIAN NH" ~ "American Indian or Alaska Native, Non-Hispanic",
+           race_eth == "Asian NH" ~ "Asian, Non-Hispanic",
+           race_eth == "NHPI NH" ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+           race_eth == "MR NH" ~ "Multiracial (two or more of above races), Non-Hispanic",
+           race_eth == "Hispanic" ~ "Hispanic (any race)",
+           TRUE ~ NA_character_))
+
+unique(ca_pop_clean$race_eth)
 
 ```
 
 ### Select demographic or geogrphic strata(s) of interest ###
 ```{r demograpgic and geograpgic strata}
 
+county_populations <- ca_pop_clean %>%
+  group_by(county) %>%
+  summarize(pop = sum(pop, na.rm = TRUE))
+
+ca_race_totals <- ca_pop_clean %>%
+  group_by(race_eth) %>%
+  summarize(pop = sum(pop, na.rm = TRUE))
+
+county_populations <- county_populations %>%
+  mutate(county = paste(county, "County"))
 
 ```
 
 ### Create a rate metric and summarize to include only one row per strata of interest ###
 ```{r rate}
 
+cases_by_county <- aggregated_cases_county %>%
+  left_join(
+    county_populations %>% select(county, pop), 
+    by = "county")
+
+cases_by_race <- aggregated_cases_race %>%
+  left_join(
+    ca_race_totals %>% select(race_eth, pop), 
+    by = "race_eth")
+
+cases_by_county <- cases_by_county %>%
+  mutate(rate_per_1000 = ((cumulative_infected/pop)*1000),
+         severe_rate_per_1000 = ((cumulative_severe/pop)*1000))
+
+cases_by_race <- cases_by_race %>%
+  mutate(rate_per_1000 = ((cumulative_infected/pop)*1000),
+         severe_rate_per_1000 = ((cumulative_severe/pop)*1000))
 
 ```

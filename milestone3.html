@@ -96,7 +96,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p><strong>Milestone 3 Components:</strong> # I’ll delete this before submitting, but it’s helpful for now! Subset rows or columns, as needed Create new variables needed for analysis (minimum 2) Clean variables needed for analysis (minimum 2) Data Re-structuring as needed (aggregated/summarized and/or pivoted) Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description One or more tables with descriptive statistics for 4 data elements</p>
+<section id="ill-delete-this-before-submitting-but-its-helpful-for-now" class="level1">
+<h1>I’ll delete this before submitting, but it’s helpful for now :)</h1>
+<p><strong>Milestone 3 Components:</strong> Subset rows or columns, as needed #mostly done! Create new variables needed for analysis (minimum 2) #done! Clean variables needed for analysis (minimum 2) #done! Data Re-structuring as needed (aggregated/summarized and/or pivoted) Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description One or more tables with descriptive statistics for 4 data elements</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>ca_cases <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/sim_novelid_CA.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -225,21 +227,99 @@ $ sex                    &lt;chr&gt; "FEMALE", "FEMALE", "FEMALE", "FEMALE", "FE
 </section>
 <section id="select-demographic-and-geographic-stratas-of-interest" class="level3">
 <h3 class="anchored" data-anchor-id="select-demographic-and-geographic-stratas-of-interest">Select demographic and geographic strata(s) of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#I think this chunk can get deleted because I'm not really sure what to include</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="aggregate-the-data-into-a-new-dataframe-to-include-only-one-row-per-strata-of-interest" class="level3">
 <h3 class="anchored" data-anchor-id="aggregate-the-data-into-a-new-dataframe-to-include-only-one-row-per-strata-of-interest">Aggregate the data into a new dataframe to include only one row per strata of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>aggregated_cases_race <span class="ot">&lt;-</span> combined_cases <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(race_eth) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative_infected =</span> <span class="fu">max</span>(cumulative_infected, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative_severe =</span> <span class="fu">max</span>(cumulative_severe, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative_unrecovered =</span> <span class="fu">max</span>(cumulative_unrecovered, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>aggregated_cases_county <span class="ot">&lt;-</span> combined_cases <span class="sc">%&gt;%</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative_infected =</span> <span class="fu">max</span>(cumulative_infected, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative_severe =</span> <span class="fu">max</span>(cumulative_severe, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">cumulative_unrecovered =</span> <span class="fu">max</span>(cumulative_unrecovered, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 </section>
 <section id="population-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="population-dataset">Population dataset</h2>
 <section id="recode-values-to-be-consistent-with-morbidity-datasets-so-they-can-be-joined" class="level3">
 <h3 class="anchored" data-anchor-id="recode-values-to-be-consistent-with-morbidity-datasets-so-they-can-be-joined">Recode values to be consistent with morbidity datasets so they can be joined</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ca_pop <span class="ot">&lt;-</span> <span class="fu">clean_names</span>(ca_pop)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>ca_pop_clean <span class="ot">&lt;-</span> ca_pop <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">race_eth =</span> race7)  <span class="sc">%&gt;%</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">race_eth =</span> <span class="fu">case_when</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"WhiteTE NH"</span> <span class="sc">~</span> <span class="st">"White, Non-Hispanic"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"Black NH"</span> <span class="sc">~</span> <span class="st">"Black, Non-Hispanic"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"AIAN NH"</span> <span class="sc">~</span> <span class="st">"American Indian or Alaska Native, Non-Hispanic"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"Asian NH"</span> <span class="sc">~</span> <span class="st">"Asian, Non-Hispanic"</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"NHPI NH"</span> <span class="sc">~</span> <span class="st">"Native Hawaiian or Pacific Islander, Non-Hispanic"</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"MR NH"</span> <span class="sc">~</span> <span class="st">"Multiracial (two or more of above races), Non-Hispanic"</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>           race_eth <span class="sc">==</span> <span class="st">"Hispanic"</span> <span class="sc">~</span> <span class="st">"Hispanic (any race)"</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>           <span class="cn">TRUE</span> <span class="sc">~</span> <span class="cn">NA_character_</span>))</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(ca_pop_clean<span class="sc">$</span>race_eth)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "White, Non-Hispanic"                                   
+[2] "Black, Non-Hispanic"                                   
+[3] "American Indian or Alaska Native, Non-Hispanic"        
+[4] "Asian, Non-Hispanic"                                   
+[5] "Native Hawaiian or Pacific Islander, Non-Hispanic"     
+[6] "Multiracial (two or more of above races), Non-Hispanic"
+[7] "Hispanic (any race)"                                   </code></pre>
+</div>
+</div>
 </section>
 <section id="select-demographic-or-geogrphic-stratas-of-interest" class="level3">
 <h3 class="anchored" data-anchor-id="select-demographic-or-geogrphic-stratas-of-interest">Select demographic or geogrphic strata(s) of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>county_populations <span class="ot">&lt;-</span> ca_pop_clean <span class="sc">%&gt;%</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county) <span class="sc">%&gt;%</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pop =</span> <span class="fu">sum</span>(pop, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>ca_race_totals <span class="ot">&lt;-</span> ca_pop_clean <span class="sc">%&gt;%</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(race_eth) <span class="sc">%&gt;%</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">pop =</span> <span class="fu">sum</span>(pop, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>county_populations <span class="ot">&lt;-</span> county_populations <span class="sc">%&gt;%</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">county =</span> <span class="fu">paste</span>(county, <span class="st">"County"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="create-a-rate-metric-and-summarize-to-include-only-one-row-per-strata-of-interest" class="level3">
 <h3 class="anchored" data-anchor-id="create-a-rate-metric-and-summarize-to-include-only-one-row-per-strata-of-interest">Create a rate metric and summarize to include only one row per strata of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cases_by_county <span class="ot">&lt;-</span> aggregated_cases_county <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    county_populations <span class="sc">%&gt;%</span> <span class="fu">select</span>(county, pop), </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"county"</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>cases_by_race <span class="ot">&lt;-</span> aggregated_cases_race <span class="sc">%&gt;%</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    ca_race_totals <span class="sc">%&gt;%</span> <span class="fu">select</span>(race_eth, pop), </span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">"race_eth"</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>cases_by_county <span class="ot">&lt;-</span> cases_by_county <span class="sc">%&gt;%</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rate_per_1000 =</span> ((cumulative_infected<span class="sc">/</span>pop)<span class="sc">*</span><span class="dv">1000</span>),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>         <span class="at">severe_rate_per_1000 =</span> ((cumulative_severe<span class="sc">/</span>pop)<span class="sc">*</span><span class="dv">1000</span>))</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>cases_by_race <span class="ot">&lt;-</span> cases_by_race <span class="sc">%&gt;%</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rate_per_1000 =</span> ((cumulative_infected<span class="sc">/</span>pop)<span class="sc">*</span><span class="dv">1000</span>),</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>         <span class="at">severe_rate_per_1000 =</span> ((cumulative_severe<span class="sc">/</span>pop)<span class="sc">*</span><span class="dv">1000</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 </section>
 </section>
 
