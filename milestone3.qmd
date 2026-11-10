@@ -2,22 +2,16 @@
 title: "PH251 Group 4 Milestone 3"
 format: html
 ---
-# I'll delete this before submitting, but it's helpful for now :)
-**Milestone 3 Components:** 
-Subset rows or columns, as needed
-#mostly done! Create new variables needed for analysis (minimum 2)
-#done! Clean variables needed for analysis (minimum 2)
-#done! Data Re-structuring as needed (aggregated/summarized and/or pivoted)
-Data dictionary based on clean dataset (minimum 4 data elements), including: Variable name, Data type, Description
-One or more tables with descriptive statistics for 4 data elements
 
 ```{r packages, include = F}
 
-#library(readr)
+install.packages("janitor")
+install.packages("aweek")
+
+library(readr)
 library(tidyverse)
 library(janitor)
 library(lubridate)
-#install.packages("aweek")
 library(aweek)
 
 ```
@@ -91,9 +85,30 @@ combined_cases <- bind_rows(ca_cases_clean, la_cases_clean)
 ```
 
 ### Select demographic and geographic strata(s) of interest ###
+
+Research question:
+Your supervisors are interested to know the course of the outbreak, if it is disproportionately affecting certain demographic or geographic populations 
+
 ```{r}
 
 #I think this chunk can get deleted because I'm not really sure what to include
+
+# Compare racial/ethnic groups statewide and counties separately.
+# Include all age groups, both sexes, and all available weeks.
+
+analysis_cases <- combined_cases %>%
+  select(
+    county,
+    race_eth,
+    age_cat,
+    sex,
+    dt_dx,
+    dx_new,
+    new_severe,
+    new_unrecovered
+  )
+
+
 
 ```
 
@@ -115,6 +130,28 @@ aggregated_cases_county <- combined_cases %>%
     cumulative_severe = max(cumulative_severe, na.rm = TRUE),
     cumulative_unrecovered = max(cumulative_unrecovered, na.rm = TRUE),
     .groups = "drop")
+
+#I am trying out this code to replace max(cumulative) with sum(new)
+
+aggregated_cases_race_2 <- combined_cases %>%
+  group_by(race_eth) %>%
+  summarise(
+    cumulative_infected = sum(dx_new, na.rm = TRUE),
+    cumulative_severe = sum(new_severe, na.rm = TRUE),
+    cumulative_unrecovered = sum(new_unrecovered, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Total cases by county across all demographic groups
+aggregated_cases_county_2 <- combined_cases %>%
+  group_by(county) %>%
+  summarise(
+    cumulative_infected = sum(dx_new, na.rm = TRUE),
+    cumulative_severe = sum(new_severe, na.rm = TRUE),
+    cumulative_unrecovered = sum(new_unrecovered, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 
 ```
 
@@ -178,4 +215,111 @@ cases_by_race <- cases_by_race %>%
   mutate(rate_per_1000 = ((cumulative_infected/pop)*1000),
          severe_rate_per_1000 = ((cumulative_severe/pop)*1000))
 
+
+# Percentage of recorded infections classified as severe, by county
+cases_by_county <- cases_by_county %>%
+  mutate(
+    percent_severe = if_else(
+      cumulative_infected > 0,
+      (cumulative_severe / cumulative_infected) * 100,
+      NA_real_
+    )
+  )
+
+# Percentage of recorded infections classified as severe, by race/ethnicity
+cases_by_race <- cases_by_race %>%
+  mutate(
+    percent_severe = if_else(
+      cumulative_infected > 0,
+      (cumulative_severe / cumulative_infected) * 100,
+      NA_real_
+    )
+  )
+
+
 ```
+
+###Data dictionary based on clean dataset (minimum 4 data elements)###
+
+
+```{r}
+data_dictionary <- tibble::tribble(
+  ~variable_name, ~data_type, ~description,
+
+  "county",
+  "Character",
+  "California county represented by the row.",
+
+  "cumulative_infected",
+  "Numeric",
+  "Total recorded infections during the study period, summed across demographic groups.",
+
+  "cumulative_severe",
+  "Numeric",
+  "Total recorded severe cases during the study period, summed across demographic groups.",
+
+  "cumulative_unrecovered",
+  "Numeric",
+  "Total recorded unrecovered cases during the study period, summed across demographic groups.",
+
+  "pop",
+  "Numeric",
+  "Estimated county population in 2023, including all ages, sexes, and racial/ethnic groups.",
+
+  "rate_per_1000",
+  "Numeric",
+  "Recorded infections per 1,000 residents during the study period: cumulative_infected / pop * 1000.",
+
+  "severe_rate_per_1000",
+  "Numeric",
+  "Recorded severe cases per 1,000 residents during the study period: cumulative_severe / pop * 1000."
+)
+
+knitr::kable(
+  data_dictionary,
+  col.names = c("Variable name", "Data type", "Description"),
+  caption = "Data dictionary for the cleaned county-level dataset"
+)
+
+sapply(cases_by_county, class)
+
+```
+###One or more tables with descriptive statistics for 4 data elements###
+
+```{r}
+
+descriptive_stats <- cases_by_county %>%
+  select(
+    `Total infections` = cumulative_infected,
+    `Total severe cases` = cumulative_severe,
+    `Infections per 1,000 residents` = rate_per_1000,
+    `Severe cases per 1,000 residents` = severe_rate_per_1000
+  ) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "value"
+  ) %>%
+  group_by(variable) %>%
+  summarise(
+    N = sum(!is.na(value)),
+    Mean = mean(value, na.rm = TRUE),
+    Median = median(value, na.rm = TRUE),
+    SD = sd(value, na.rm = TRUE),
+    Minimum = min(value, na.rm = TRUE),
+    Maximum = max(value, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+knitr::kable(
+  descriptive_stats,
+  digits = 2,
+  col.names = c(
+    "Data element", "N", "Mean", "Median",
+    "SD", "Minimum", "Maximum"
+  ),
+  caption = "Descriptive statistics across California counties during the outbreak"
+)
+
+```
+
