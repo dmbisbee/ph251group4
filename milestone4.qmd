@@ -3,18 +3,33 @@ title: "milestone4"
 format: html
 ---
 
+**Research Question**
+
+Your supervisors are interested to know the course of the outbreak, if it is disproportionately affecting certain demographic or geographic populations and how prevention and treatment resources should be allocated.
+
 ## Final Data Sets
 
 ```{r packages, include = F}
 
 #install.packages("janitor")
 #install.packages("aweek")
+#install.packages("scales")
 
 library(readr)
 library(tidyverse)
 library(janitor)
 library(lubridate)
 library(aweek)
+library(ggplot2)
+library(scales)
+
+```
+
+```{r data import, include = F}
+
+ca_cases <- read_csv("data/sim_novelid_CA.csv")
+la_cases <- read_csv("data/sim_novelid_LACounty.csv")
+ca_pop <- read_csv("data/ca_pop_2023.csv")
 
 ```
 
@@ -23,10 +38,117 @@ library(aweek)
 
 ```{r}
 
-ca_cases <- read_csv("data/sim_novelid_CA.csv")
-la_cases <- read_csv("data/sim_novelid_LACounty.csv")
-ca_pop <- read_csv("data/ca_pop_2023.csv")
+#snakecase
+la_cases <- clean_names(la_cases)
+ca_cases <- clean_names(ca_cases)
+ca_pop <- clean_names(ca_pop)
 
+ca_pop_clean <- ca_pop %>%
+    rename(race_eth = race7)  %>%
+    mutate(race_eth = case_when(
+           race_eth == "WhiteTE NH" ~ "White, Non-Hispanic",
+           race_eth == "Black NH" ~ "Black, Non-Hispanic",
+           race_eth == "AIAN NH" ~ "American Indian or Alaska Native, Non-Hispanic",
+           race_eth == "Asian NH" ~ "Asian, Non-Hispanic",
+           race_eth == "NHPI NH" ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+           race_eth == "MR NH" ~ "Multiracial (two or more of above races), Non-Hispanic",
+           race_eth == "Hispanic" ~ "Hispanic (any race)",
+           TRUE ~ NA_character_))
+
+#tidying la_cases
+la_cases_clean <- la_cases %>%
+    rename(age_cat = age_category,
+           cumulative_infected = infected_cumulative,
+           cumulative_unrecovered = unrecovered_cumulative,
+           cumulative_severe = severe_cumulative,
+           new_severe = severe_new,
+           new_unrecovered = unrecovered_new) %>%
+    mutate(dt_dx = dmy(dt_dx),
+           county = "Los Angeles County", #adding a county column for future merge with ca_cases
+           dt_report = gsub("-", "", format(as.Date(aweek::date2week(dt_dx, week_start = "Sunday")), "%Y-%U")))
+
+# making dt_report numeric to match ca_cases
+la_cases_clean$dt_report <- as.numeric(la_cases_clean$dt_report)
+
+# tidying ca_cases
+ ca_cases_clean <- ca_cases %>%
+   rename(race_eth = race_ethnicity,
+          dt_dx = dt_diagnosis,
+          dx_new = new_infections,
+          dt_report = time_int)  %>%
+   mutate(race_eth = case_when(
+          race_eth == 1 ~ "White, Non-Hispanic",
+          race_eth == 2 ~ "Black, Non-Hispanic",
+          race_eth == 3 ~ "American Indian or Alaska Native, Non-Hispanic",
+          race_eth == 4 ~ "Asian, Non-Hispanic",
+          race_eth == 5 ~ "Native Hawaiian or Pacific Islander, Non-Hispanic",
+          race_eth == 6 ~ "Multiracial (two or more of above races), Non-Hispanic",
+          race_eth == 7 ~ "Hispanic (any race)",
+          race_eth == 9 ~ "Unknown",
+          TRUE ~ NA_character_))
+ 
+ # combine la and ca cases
+ combined_cases <- bind_rows(ca_cases_clean, la_cases_clean)
+ 
+aggregated_cases_race <- combined_cases %>%
+  group_by(race_eth) %>%
+  summarise(
+    cumulative_infected = max(cumulative_infected, na.rm = TRUE),
+    cumulative_severe = max(cumulative_severe, na.rm = TRUE),
+    cumulative_unrecovered = max(cumulative_unrecovered, na.rm = TRUE),
+    .groups = "drop")
+
+aggregated_cases_county <- combined_cases %>%
+  group_by(county) %>%
+  summarise(
+    cumulative_infected = max(cumulative_infected, na.rm = TRUE),
+    cumulative_severe = max(cumulative_severe, na.rm = TRUE),
+    cumulative_unrecovered = max(cumulative_unrecovered, na.rm = TRUE),
+    .groups = "drop")
+
+# everything above here is needed for a plot/chart below ^
+
+# everything below here is copied from milestone 3 
+county_populations <- ca_pop_clean %>%
+  group_by(county) %>%
+  summarize(pop = sum(pop, na.rm = TRUE))
+
+ca_race_totals <- ca_pop_clean %>%
+  group_by(race_eth) %>%
+  summarize(pop = sum(pop, na.rm = TRUE))
+
+county_populations <- county_populations %>%
+  mutate(county = paste(county, "County"))
+
+cases_by_county <- aggregated_cases_county %>%
+  left_join(county_populations %>%
+    select(county, pop), by = "county")
+
+cases_by_race <- aggregated_cases_race %>%
+  left_join(ca_race_totals %>%
+    select(race_eth, pop), by = "race_eth")
+
+cases_by_county <- cases_by_county %>%
+  mutate(rate_per_1000 = ((cumulative_infected/pop)*1000),
+         severe_rate_per_1000 = ((cumulative_severe/pop)*1000))
+
+cases_by_race <- cases_by_race %>%
+  mutate(rate_per_1000 = ((cumulative_infected/pop)*1000),
+         severe_rate_per_1000 = ((cumulative_severe/pop)*1000))
+
+# Percentage of recorded infections classified as severe, by race/ethnicity
+cases_by_race <- cases_by_race %>%
+  mutate(percent_severe = if_else(
+      cumulative_infected > 0,
+      (cumulative_severe / cumulative_infected) * 100,
+      NA_real_))
+
+# Percentage of recorded infections classified as severe, by county
+cases_by_county <- cases_by_county %>%
+  mutate(percent_severe = if_else(
+      cumulative_infected > 0,
+      (cumulative_severe / cumulative_infected) * 100,
+      NA_real_))
 ```
 
 ## Visualizations
@@ -36,6 +158,42 @@ ca_pop <- read_csv("data/ca_pop_2023.csv")
 
 *Needs to include* - Code used to generate visual - Legend (if necessary) - 1-2 sentence interpretation
 
-```{r}
+```{r first visualization}
+
+cases_by_county %>%
+  slice_max(order_by = rate_per_1000, n = 10) %>%
+  ggplot(aes(x = rate_per_1000, y = reorder(county, rate_per_1000))) +
+  geom_col(fill = "sienna3") +
+  labs(title = "Counties Most Impacted by Outbreak Emergence",
+    x = "Rate per 1,000",
+    y = "County") +
+  theme_minimal()
+
+# I made this too, but I prefer the one by county - this can get deleted prior to submission
+
+# ggplot(aggregated_cases_race, aes(x = cumulative_infected, y = reorder(race_eth, -cumulative_infected))) +
+#   geom_col(fill = "olivedrab", width = 0.7) +
+#   geom_text(aes(label = comma(cumulative_infected)),
+#     hjust = -0.12,        # Places text just outside the end of the bar
+#     size = 3.5) +
+#   scale_x_continuous(labels = comma,
+#     expand = expansion(mult = c(0, 0.20))) + # adds space for labels on the right of each bar
+#   labs(title = "Cumulative Cases by Race/Ethnicity",
+#     x = "Cumulative Cases",
+#     y = NULL) +
+#   theme_minimal() +
+#   theme(panel.grid.major.y = element_blank()) # removes horizontal gridlines
 
 ```
+**Interpretation**
+
+The respiratory disease outbreak is affecting Imperial County at twice the rate of the next most infected county.  
+
+```{r second visualization}
+
+
+
+```
+
+**Interpretation**
+
