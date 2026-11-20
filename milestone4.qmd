@@ -187,7 +187,7 @@ cases_by_county %>%
 ```
 **Interpretation**
 
-The respiratory disease outbreak is affecting Imperial County at twice the rate of the next most infected county.  
+The respiratory disease outbreak is affecting Imperial County at twice the rate of the next most infected county. More than 1 in 10 residents of Imperial County has been infected.  
 
 ```{r second visualization}
 
