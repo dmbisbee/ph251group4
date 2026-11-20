@@ -1,0 +1,41 @@
+---
+title: "milestone4"
+format: html
+---
+
+## Final Data Sets
+
+```{r packages, include = F}
+
+#install.packages("janitor")
+#install.packages("aweek")
+
+library(readr)
+library(tidyverse)
+library(janitor)
+library(lubridate)
+library(aweek)
+
+```
+
+-   Join all datasets together
+-   Calculate any remaining data elements needed for analysis
+
+```{r}
+
+ca_cases <- read_csv("data/sim_novelid_CA.csv")
+la_cases <- read_csv("data/sim_novelid_LACounty.csv")
+ca_pop <- read_csv("data/ca_pop_2023.csv")
+
+```
+
+## Visualizations
+
+-   One print quality table as requested in scenario
+-   One print quality plot or chart as requested in scenario
+
+*Needs to include* - Code used to generate visual - Legend (if necessary) - 1-2 sentence interpretation
+
+```{r}
+
+```
