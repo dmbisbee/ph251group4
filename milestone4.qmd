@@ -1,19 +1,28 @@
 ---
-title: "milestone4"
+
+title: "Simulated Respiratory Disease Outbreak in California"
+author: "PH251 Group 4"
 format: html
+execute:
+  echo: true
+  warning: false
+  message: false
+
 ---
 
-**Research Question**
+# Research Question
 
 Your supervisors are interested to know the course of the outbreak, if it is disproportionately affecting certain demographic or geographic populations and how prevention and treatment resources should be allocated.
 
-## Final Data Sets
+# Data Preparation
 
 ```{r packages, include = F}
 
 #install.packages("janitor")
 #install.packages("aweek")
 #install.packages("scales")
+#install.packages("gt")
+library(gt)
 
 library(readr)
 library(tidyverse)
@@ -33,10 +42,8 @@ ca_pop <- read_csv("data/ca_pop_2023.csv")
 
 ```
 
--   Join all datasets together
--   Calculate any remaining data elements needed for analysis
 
-```{r}
+```{r data_management, include=FALSE}
 
 #snakecase
 la_cases <- clean_names(la_cases)
@@ -151,49 +158,212 @@ cases_by_county <- cases_by_county %>%
       NA_real_))
 ```
 
-## Visualizations
+# Visualization 1
 
--   One print quality table as requested in scenario
--   One print quality plot or chart as requested in scenario
 
-*Needs to include* - Code used to generate visual - Legend (if necessary) - 1-2 sentence interpretation
-
-```{r first visualization}
+```{r first visualization, echo=TRUE}
 
 cases_by_county %>%
   slice_max(order_by = rate_per_1000, n = 10) %>%
   ggplot(aes(x = rate_per_1000, y = reorder(county, rate_per_1000))) +
   geom_col(fill = "sienna3") +
-  labs(title = "Counties Most Impacted by Outbreak Emergence",
-    x = "Rate per 1,000",
-    y = "County") +
-  theme_minimal()
+  labs(
+  title = "California counties with the highest infection rates",
+  subtitle = paste(
+    "Reporting weeks dated",
+    "May 29–December 25, 2023"
+  ),
+  x = "Recorded infections per 1,000 residents",
+  y = "County",
+  caption = paste(
+    "2023 population estimates.\n",
+    "All ages and both sexes combined. Rates are not age-adjusted."
+  )
+)+
+theme_minimal() +
+theme(
+  plot.title = element_text(face = "bold"),
+  axis.text.y = element_text(size = 8)
+)
 
-# I made this too, but I prefer the one by county - this can get deleted prior to submission
-
-# ggplot(aggregated_cases_race, aes(x = cumulative_infected, y = reorder(race_eth, -cumulative_infected))) +
-#   geom_col(fill = "olivedrab", width = 0.7) +
-#   geom_text(aes(label = comma(cumulative_infected)),
-#     hjust = -0.12,        # Places text just outside the end of the bar
-#     size = 3.5) +
-#   scale_x_continuous(labels = comma,
-#     expand = expansion(mult = c(0, 0.20))) + # adds space for labels on the right of each bar
-#   labs(title = "Cumulative Cases by Race/Ethnicity",
-#     x = "Cumulative Cases",
-#     y = NULL) +
-#   theme_minimal() +
-#   theme(panel.grid.major.y = element_blank()) # removes horizontal gridlines
 
 ```
 **Interpretation**
 
 The respiratory disease outbreak is affecting Imperial County at twice the rate of the next most infected county. More than 1 in 10 residents of Imperial County has been infected.  
 
-```{r second visualization}
+# Visualization 2
 
+```{r second visualization,echo=TRUE }
+aggregated_cases_race <- combined_cases %>%
+  group_by(race_eth) %>%
+  summarise(
+    cumulative_infected = sum(dx_new, na.rm = TRUE),
+    cumulative_severe = sum(new_severe, na.rm = TRUE),
+    cumulative_unrecovered = sum(new_unrecovered, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+aggregated_cases_county <- combined_cases %>%
+  group_by(county) %>%
+  summarise(
+    cumulative_infected = sum(dx_new, na.rm = TRUE),
+    cumulative_severe = sum(new_severe, na.rm = TRUE),
+    cumulative_unrecovered = sum(new_unrecovered, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+race_table <- cases_by_race %>%
+  arrange(desc(rate_per_1000)) %>%
+  mutate(
+    race_eth = case_when(
+      race_eth == "White, Non-Hispanic" ~ "White (NH)",
+      race_eth == "Black, Non-Hispanic" ~ "Black (NH)",
+      race_eth == "American Indian or Alaska Native, Non-Hispanic" ~
+        "American Indian or Alaska Native (NH)",
+      race_eth == "Asian, Non-Hispanic" ~ "Asian (NH)",
+      race_eth == "Native Hawaiian or Pacific Islander, Non-Hispanic" ~
+        "Native Hawaiian or Pacific Islander (NH)",
+      race_eth == "Multiracial (two or more of above races), Non-Hispanic" ~
+        "Multiracial (NH)",
+      TRUE ~ race_eth
+    )
+  ) %>%
+  select(race_eth, pop, cumulative_infected, rate_per_1000,
+         cumulative_severe, severe_rate_per_1000) %>%
+  gt() %>%
+  tab_header(
+    title = "Recorded infections and severe cases by race/ethnicity",
+    subtitle = "California | Reporting weeks dated May 29–December 25, 2023"
+  ) %>%
+  cols_label(
+    race_eth = "Race/ethnicity",
+    pop = "2023 population",
+    cumulative_infected = "Infections",
+    rate_per_1000 = "Infections per 1,000",
+    cumulative_severe = "Severe cases",
+    severe_rate_per_1000 = "Severe cases per 1,000"
+  ) %>%
+  fmt_number(
+    columns = c(pop, cumulative_infected, cumulative_severe),
+    decimals = 0, use_seps = TRUE
+  ) %>%
+  fmt_number(
+    columns = c(rate_per_1000, severe_rate_per_1000),
+    decimals = 2
+  ) %>%
+  cols_align(align = "left", columns = race_eth) %>%
+  cols_width(
+    race_eth ~ pct(32),
+    c(pop, cumulative_infected, rate_per_1000,
+      cumulative_severe, severe_rate_per_1000) ~ pct(13.6)
+  ) %>%
+  tab_source_note(
+    "Source: California and Los Angeles morbidity datasets; 2023 population estimates."
+  ) %>%
+  tab_source_note(
+    paste(
+      "All ages and both sexes combined. NH = non-Hispanic.",
+      "Rates = cases / group population × 1,000; these are crude, not age-adjusted rates.",
+      "Rows are ordered by infection rate, highest first. Counts and rates summarize the full study period."
+    )
+  ) %>%
+  opt_row_striping() %>%
+  tab_options(
+    table.font.names = "Arial",
+    table.font.size = px(13),
+    table.width = pct(100),
+    heading.align = "left",
+    data_row.padding = px(9)
+  )
+
+race_table
 
 
 ```
 
 **Interpretation**
+
+The highest crude infection rate was recorded among the non-Hispanic American Indian or Alaska Native group (139.88 per 1,000 residents), while the non-Hispanic White group recorded the highest severe-case rate (4.58 per 1,000) and the largest severe-case count (63,448). Prevention planning can consider groups with higher infection rates, while treatment-capacity planning should consider severe-case counts alongside rates and local service needs.
+
+
+# Visualization 3
+
+```{r third visualization,echo=TRUE}
+
+
+
+ggplot(
+  cases_by_race,
+  aes(
+    x = reorder(race_eth, rate_per_1000),
+    y = rate_per_1000
+  )
+) +
+  geom_col(fill = "steelblue3") +
+  coord_flip() +
+  labs(
+    title = "Infection rates by race and ethnicity",
+    subtitle = "California and Los Angeles County, May-December 2023",
+    x = "Race/ethnicity",
+    y = "Recorded infections per 1,000 residents",
+    caption = paste(
+      "Source: California and Los Angeles County morbidity datasets;",
+      "2023 California population estimates.",
+      "\nRates are crude (not age-adjusted) and calculated as",
+      "cumulative infections divided by population × 1,000."
+    )
+  ) +
+  scale_y_continuous(labels = comma_format(accuracy = 0.1)) +
+  theme_minimal() +
+  theme(
+  plot.title = element_text(face = "bold", size = 12),
+  axis.text.y = element_text(size = 8)
+)
+
+```
+
+**Interpretation**
+The burden of infection was not evenly distributed across racial and ethnic groups. Some populations experienced substantially higher infection rates per 1,000 residents, suggesting that prevention and outreach resources may need to be prioritized toward groups with the highest rates of disease.
+
+
+# Visualization 4
+```{r forth visualization,echo=TRUE}
+combined_cases %>%
+  group_by(dt_report) %>%
+  summarize(
+    new_cases = sum(dx_new, na.rm = TRUE)
+  ) %>%
+  ggplot(aes(x = dt_report, y = new_cases)) +
+  geom_line(
+    color = "steelblue",
+    linewidth = 1
+  ) +
+  labs(
+    title = "Cases over time",
+    subtitle = "California reporting weeks, May–December 2023",
+    x = "Reporting week",
+    y = "New reported cases",
+    caption = paste(
+      "Source: Combined California and Los Angeles County surveillance datasets.",
+      "Values represent weekly reported infections."
+    )
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 11),
+    axis.title = element_text(face = "bold"),
+    plot.caption = element_text(size = 8),
+    panel.grid.minor = element_blank()
+  ) +
+  scale_y_continuous(labels = comma)
+```
+**Interpretation**
+The epidemic curve shows how the outbreak changed over time, identifying periods of increasing and decreasing transmission. Peaks in the curve represent weeks with the greatest disease activity and can help guide when prevention resources and healthcare capacity were most needed.
+
+
+# Conclusions
+
+The outbreak burden was not evenly distributed across California. Imperial County experienced the highest infection rate, while several racial and ethnic populations experienced substantially higher infection rates than others. These findings suggest that prevention resources should be prioritized toward communities with elevated infection rates and that treatment capacity should be directed toward areas experiencing larger numbers of severe cases.
 
