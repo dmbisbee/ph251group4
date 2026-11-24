@@ -1,5 +1,4 @@
 ---
-
 title: "Simulated Respiratory Disease Outbreak in California"
 author: "PH251 Group 4"
 format: html
@@ -7,12 +6,11 @@ execute:
   echo: true
   warning: false
   message: false
-
 ---
 
 # Research Question
 
-Your supervisors are interested to know the course of the outbreak, if it is disproportionately affecting certain demographic or geographic populations and how prevention and treatment resources should be allocated.
+How has the simulated respiratory disease outbreak in California progressed over time, which demographic groups and geographic areas are disproportionately affected, and how can these findings guide the allocation of prevention and treatment resources?
 
 # Data Preparation
 
